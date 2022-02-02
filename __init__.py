@@ -1,6 +1,8 @@
 
 
 import sys, os
-#sys.path.append(os.path.dirname(__file__))
+sys.path.append(os.path.dirname(__file__))
 
-import layouts
+from layouts import *
+from plot_widgets import *
+from apps import *

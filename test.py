@@ -61,6 +61,11 @@ class DefaultAppSkin(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.about(self, "About", "ftg")
         
 class TuneableApp(DefaultAppSkin):
+    
+    @property
+    def navigation_toolbar(self):
+        return NavigationToolbar
+    
     def __init__(self, function):
         super().__init__()
         
@@ -113,7 +118,7 @@ def test_function(app):
     app.layout.addWidget(app.figure,0,0,1,5)
     app.layout.addWidget(app.slider,1,0,1,4)
     app.layout.addWidget(app.color_control,1,4,1,1)    
-    app.addToolBar(NavigationToolbar(app.figure, app))
+    app.addToolBar(app.navigation_toolbar(app.figure, app))
     
         
 class TestApp(DefaultAppSkin):
@@ -154,11 +159,6 @@ class TestApp(DefaultAppSkin):
         self.setCentralWidget(central_widget)
         self.addToolBar(NavigationToolbar(widget_to_test, self))
         
-    
-        
-    
-
-
 
 if __name__ == "__main__":
     # progname = os.path.basename(sys.argv[0])
