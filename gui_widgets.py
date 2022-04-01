@@ -103,6 +103,11 @@ class SuperSlider(QrealWidgets.QWidget):
         self.setMaximumHeight(50)
         self.setLayout(l)
 
+    def set_span(self,span,minimum = 0):
+        self.Slider.setMinimum(minimum)
+        self.Slider.setMaximum(minimum + span-1)
+        self.Slider.setValue(minimum)
+
     @property
     def value(self):
         return self.Slider.value()

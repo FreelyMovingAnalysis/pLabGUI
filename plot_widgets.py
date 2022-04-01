@@ -38,6 +38,10 @@ from PyQt5.QtWidgets import (QSlider,
                              QApplication, 
                              QStyleFactory)
 
+import os
+_CACHE_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)),"gui_cache")
+
+
 class CanvasHandle(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
 
@@ -307,8 +311,15 @@ class PltColorControl(QtWidgets.QWidget):
     
     valueChanged = Signal()
     
+    from pGenUtils.workflows import CachedVariables
+    
     def __init__(self):
         super().__init__()
+        
+        self.cache = self.CachedVariables(cache_dir_path=_CACHE_FOLDER,cache_filename= "color_control")
+        self.cache.init["vmin"] =  0
+        self.cache.init["vmax"] =  255
+        self.cache.init["cmap"] = "gray"
         
         l = QGridLayout(self)
         
@@ -322,13 +333,15 @@ class PltColorControl(QtWidgets.QWidget):
             'coolwarm', 'bwr', 'seismic','Pastel1', 'Pastel2', 'Paired', 'Accent','Dark2', 'Set1', 'Set2', 'Set3','tab10', 'tab20',
             'tab20b', 'tab20c','flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern','gnuplot', 'gnuplot2', 'CMRmap',
             'cubehelix', 'brg', 'hsv','gist_rainbow', 'rainbow', 'viridis', 'nipy_spectral', 'gist_ncar', 'None'])
-        
-        
-        self.vmax = PltQLineEdit(option = "vmax", init_value = 1,vartype = float)
-        self.vmax.valueChanged.connect(self.valueChanged.emit)
+        index = self.cmap.findText(self.cache["cmap"], QtCore.Qt.MatchFixedString)
+        if index >= 0:
+             self.cmap.setCurrentIndex(index)
+                
+        self.vmax = PltQLineEdit(option = "vmax", init_value = float(self.cache["vmax"]) ,vartype = float)
+        self.vmax.valueChanged.connect(self.update_values)
         self.vmax.setMaximumWidth(30)
-        self.vmin = PltQLineEdit(option = "vmin", init_value = 0,vartype = float)
-        self.vmin.valueChanged.connect(self.valueChanged.emit)
+        self.vmin = PltQLineEdit(option = "vmin", init_value = float(self.cache["vmin"]),vartype = float)
+        self.vmin.valueChanged.connect(self.update_values)
         self.vmin.setMaximumWidth(30)
         self.IAuto = QCheckBox("Auto")
         self.IAuto.setChecked(True)
@@ -343,6 +356,13 @@ class PltColorControl(QtWidgets.QWidget):
     @property
     def value(self):
         return {**self.cmap.value,**self.vmax.value,**self.vmin.value}
+    
+    def update_values(self):
+        self.cache["vmin"] = float(self.vmin.text())
+        self.cache["vmax"] = float(self.vmax.text())
+        self.cache["cmap"] = self.cmap.currentText()
+        
+        self.valueChanged.emit
         
         
     

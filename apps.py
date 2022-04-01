@@ -132,3 +132,24 @@ def custom_app_launcher(tuning_function,**kwargs):
     dlg.show()
     _ = qApp.exec_()
     del qApp, dlg
+    
+    
+def video_app(array):
+    def function(app):
+        data = array
+
+        app.figure.add_axes( "image_axis" )
+        app.figure.image_axis.imshow(data,zorder = 0, interpolation = "nearest") 
+        app.figure.image_axis.plot_data[0].set_time_axis(axis = 2, mode = "onpoint") 
+        app.slider.set_span(data.shape[2])
+        app.figure.image_axis.plot_data[0].connect_slider(app.slider)
+        app.figure.image_axis.plot_data[0].connect_selector(app.color_control)
+    
+        app.figure.figure.set_tight_layout(False)
+    
+        app.layout.addWidget(app.figure,0,0,1,5)
+        app.layout.addWidget(app.slider,1,0,1,4)
+        app.layout.addWidget(app.color_control,1,4,1,1)    
+        app.addToolBar(app.navigation_toolbar(app.figure, app))
+        
+    custom_app_launcher(function)
