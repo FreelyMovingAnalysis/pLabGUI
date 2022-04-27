@@ -140,8 +140,8 @@ def video_app(array):
 
         app.figure.add_axes( "image_axis" )
         app.figure.image_axis.imshow(data,zorder = 0, interpolation = "nearest") 
-        app.figure.image_axis.plot_data[0].set_time_axis(axis = 2, mode = "onpoint") 
-        app.slider.set_span(data.shape[2])
+        app.figure.image_axis.plot_data[0].set_time_axis(axis = len(array.shape)-1, mode = "onpoint") 
+        app.slider.set_span(data.shape[len(array.shape)-1])
         app.figure.image_axis.plot_data[0].connect_slider(app.slider)
         app.figure.image_axis.plot_data[0].connect_selector(app.color_control)
     
